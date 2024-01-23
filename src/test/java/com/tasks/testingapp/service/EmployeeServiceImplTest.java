@@ -61,7 +61,7 @@ public class EmployeeServiceImplTest {
     @Test
     //whenExceptionThrown_thenAssertionSucceeds
     public void EmployeeNotFoundExceptionTest() throws EmployeeNotFoundException{
-        int id = 0;
+        int id = 1;
 
         given(employeeRepository.findById(id)).willReturn(Optional.empty());
 
