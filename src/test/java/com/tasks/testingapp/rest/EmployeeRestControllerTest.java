@@ -2,13 +2,19 @@ package com.tasks.testingapp.rest;
 
 import com.tasks.testingapp.entity.Employee;
 import com.tasks.testingapp.service.EmployeeService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+//import org.junit.jupiter.api.AfterEach;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -20,25 +26,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+
+@RunWith(SpringRunner.class)
 @WebMvcTest(EmployeeRestController.class)
-class EmployeeRestControllerTest {
+public class EmployeeRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private EmployeeService employeeService;
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
-    void getAllEmployees() throws Exception {
+    public void getAllEmployees() throws Exception {
         // Arrange
         List<Employee> employees = Arrays.asList(new Employee("John","Mayer","jm@g.com"), new Employee("Alice","john","aj@g.com"));
+
         given(employeeService.findAll()).willReturn(employees);
 
         // Act and Assert

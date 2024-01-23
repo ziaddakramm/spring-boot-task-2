@@ -2,40 +2,52 @@ package com.tasks.testingapp.service;
 
 import com.tasks.testingapp.dao.EmployeeRepository;
 import com.tasks.testingapp.exception.EmployeeNotFoundException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+//import org.junit.jupiter.api.AfterEach;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+//import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-class EmployeeServiceImplTest {
+public class EmployeeServiceImplTest {
+
+    @Mock
+    private EmployeeRepository employeeRepository;
+    private AutoCloseable autoCloseable;
+    private EmployeeService underTest;
+
+    @Rule
+    public final ExpectedException expectedException = ExpectedException.none();
 
 
-@Mock
-private EmployeeRepository employeeRepository;
-private AutoCloseable autoCloseable;
-private EmployeeService underTest;
-    @BeforeEach
-    void setUp() {
-       autoCloseable= MockitoAnnotations.openMocks(this);
-        underTest=new EmployeeServiceImpl(employeeRepository);
+    @Before
+    public void setUp() {
+        autoCloseable = MockitoAnnotations.openMocks(this);
+        underTest = new EmployeeServiceImpl(employeeRepository);
     }
 
-    @AfterEach
-    void tearDown() throws Exception{
+    @After
+    public void tearDown() throws Exception {
 
         autoCloseable.close();
     }
 
     @Test
-    void canFindAllEmployees() {
+    public void canFindAllEmployees() {
         //when
         //
         underTest.findAll();
@@ -48,16 +60,28 @@ private EmployeeService underTest;
 
     @Test
     //whenExceptionThrown_thenAssertionSucceeds
-    public void whenExceptionThrown_thenAssertionSucceeds() {
-        int id=0;
+    public void EmployeeNotFoundExceptionTest() throws EmployeeNotFoundException{
+        int id = 0;
+
         given(employeeRepository.findById(id)).willReturn(Optional.empty());
+
         Exception exception = assertThrows(EmployeeNotFoundException.class, () -> {
             underTest.findById(id);
         });
 
-        String expectedMessage = "employee id not found -"+id;
+        String expectedMessage = "employee id not found -" + id;
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+
+    @Test
+    //whenExceptionThrown_thenAssertionSucceeds
+    public void EmployeeNotFoundExceptionRuleTest() throws EmployeeNotFoundException {
+        int id = 0;
+        given(employeeRepository.findById(id)).willReturn(Optional.empty());
+        expectedException.expect(EmployeeNotFoundException.class);
+        underTest.findById(id);
     }
 }
